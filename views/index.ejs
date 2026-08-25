@@ -1,0 +1,131 @@
+<%
+const count = images.length;
+%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My gallery · Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+    <div class="orb orb--mint orb--tl" aria-hidden="true"></div>
+    <div class="orb orb--sky orb--br" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="brand" href="/">Gallery</a>
+            <nav class="nav">
+                <a class="is-active" href="/"><i data-lucide="images"></i><span>My images</span></a>
+                <a href="/favorites"><i data-lucide="heart"></i><span>Favorites</span></a>
+                <a href="/logout"><i data-lucide="log-out"></i><span>Log out</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="page-title">
+            <div>
+                <h1 class="display">Your images</h1>
+                <p class="lead">Hi <%= user.name %> — everything here is private to you.</p>
+            </div>
+            <span class="badge"><i data-lucide="images"></i> <%= count %> image<%= count === 1 ? '' : 's' %></span>
+        </div>
+
+        <form class="upload-card" method="POST" action="/upload" enctype="multipart/form-data">
+            <div class="field">
+                <label for="image">Upload an image</label>
+                <input id="image" type="file" name="image" accept="image/*" required>
+                <span class="field-hint">JPG, PNG, GIF or WebP. Just the picture — no extra fields.</span>
+            </div>
+            <button class="btn btn-primary" type="submit">
+                <i data-lucide="upload"></i>
+                Upload
+            </button>
+        </form>
+
+        <form class="toolbar card" method="GET" action="/">
+            <div class="search-field">
+                <i data-lucide="search"></i>
+                <input type="search" name="q" value="<%= q %>" placeholder="Search your images…">
+            </div>
+            <div class="sort-field">
+                <select name="sort" aria-label="Sort images" onchange="this.form.submit()">
+                    <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest first</option>
+                    <option value="oldest" <%= sort === 'oldest' ? 'selected' : '' %>>Oldest first</option>
+                    <option value="name" <%= sort === 'name' ? 'selected' : '' %>>Name A–Z</option>
+                    <option value="name-desc" <%= sort === 'name-desc' ? 'selected' : '' %>>Name Z–A</option>
+                </select>
+            </div>
+            <span class="toolbar-spacer"></span>
+            <% if (q !== '') { %>
+                <a class="btn btn-ghost" href="/"><i data-lucide="x"></i> Clear</a>
+            <% } %>
+        </form>
+
+        <% if (count === 0) { %>
+            <div class="card empty-state">
+                <% if (q !== '') { %>
+                    <h2 class="display-sm">No matches</h2>
+                    <p>No images match “<%= q %>”.</p>
+                <% } else { %>
+                    <h2 class="display-sm">Nothing here yet</h2>
+                    <p>Upload your first image above and it will appear here.</p>
+                <% } %>
+            </div>
+        <% } else { %>
+            <div id="images-empty-filter" class="card empty-state" hidden>
+                <h2 class="display-sm">No matches</h2>
+                <p>No images match your search.</p>
+            </div>
+            <div class="image-grid" id="image-grid">
+                <% images.forEach(function(img) { %>
+                    <% const src = 'uploads/' + img.file_name; %>
+                    <article class="image-card"
+                             data-image-card
+                             data-search="<%= img.title + ' ' + img.file_name %>">
+                        <a class="image-card__media" href="<%= src %>" data-title="<%= img.title %>">
+                            <img src="<%= src %>" alt="<%= img.title %>" loading="lazy">
+                        </a>
+                        <div class="image-card__body">
+                            <div class="image-card__title" title="<%= img.title %>">
+                                <%= img.title %>
+                            </div>
+                            <div class="image-card__meta"><%= img.file_name %></div>
+                            <div class="image-card__actions">
+                                <button type="button"
+                                        class="btn btn-sm btn-outline fav-btn"
+                                        data-fav-src="<%= src %>">
+                                    <i data-lucide="heart"></i>
+                                    <span class="fav-label">Favorite</span>
+                                </button>
+                                <a class="btn btn-sm btn-outline" href="/edit/<%= img.id %>">
+                                    <i data-lucide="pencil"></i>
+                                    Rename
+                                </a>
+                                <a class="btn btn-sm btn-danger-soft"
+                                   href="/delete/<%= img.id %>"
+                                   onclick="return confirm('Delete this image?')">
+                                    <i data-lucide="trash-2"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                <% }); %>
+            </div>
+        <% } %>
+    </main>
+
+    <script>
+      window.IMAGE_CATALOG = <%- safeJson(catalog) %>;
+    </script>
+    <script src="/favorites.js"></script>
+    <script src="/viewer.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

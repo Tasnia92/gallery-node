@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Create account · Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="auth-body">
+    <div class="orb orb--peach orb--tl" aria-hidden="true"></div>
+    <div class="orb orb--lavender orb--br" aria-hidden="true"></div>
+    <div class="orb orb--mint orb--tr" aria-hidden="true"></div>
+
+    <main class="auth-wrap">
+        <a class="brand brand--center" href="/register">Gallery</a>
+
+        <section class="card auth-card">
+            <h1 class="display">Create account</h1>
+            <p class="lead">A private space for your uploaded images.</p>
+
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <i data-lucide="circle-alert"></i>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <form method="POST" action="/register" class="form-stack">
+                <div>
+                    <label for="name">Name</label>
+                    <input id="name" type="text" name="name" required
+                           value="<%= name %>">
+                </div>
+                <div>
+                    <label for="email">Email</label>
+                    <input id="email" type="email" name="email" required
+                           value="<%= email %>">
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input id="password" type="password" name="password" required>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-primary" type="submit">Create account</button>
+                </div>
+            </form>
+
+            <p class="auth-switch">Already have an account? <a class="link" href="/login">Sign in</a></p>
+        </section>
+    </main>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

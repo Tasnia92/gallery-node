@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sign in · Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body class="auth-body">
+    <div class="orb orb--mint orb--tl" aria-hidden="true"></div>
+    <div class="orb orb--rose orb--br" aria-hidden="true"></div>
+    <div class="orb orb--sky orb--tr" aria-hidden="true"></div>
+
+    <main class="auth-wrap">
+        <a class="brand brand--center" href="/login">Gallery</a>
+
+        <section class="card auth-card">
+            <h1 class="display">Sign in</h1>
+            <p class="lead">Browse and upload your own images.</p>
+
+            <% if (error) { %>
+                <div class="alert alert-error">
+                    <i data-lucide="circle-alert"></i>
+                    <span><%= error %></span>
+                </div>
+            <% } %>
+
+            <form method="POST" action="/login" class="form-stack">
+                <div>
+                    <label for="email">Email</label>
+                    <input id="email" type="email" name="email" required
+                           value="<%= email %>">
+                </div>
+                <div>
+                    <label for="password">Password</label>
+                    <input id="password" type="password" name="password" required>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-primary" type="submit">Sign in</button>
+                </div>
+            </form>
+
+            <p class="auth-switch">New here? <a class="link" href="/register">Create an account</a></p>
+        </section>
+    </main>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

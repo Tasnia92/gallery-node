@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Favorites · Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body data-page="favorites">
+    <div class="orb orb--rose orb--tl" aria-hidden="true"></div>
+    <div class="orb orb--sky orb--br" aria-hidden="true"></div>
+
+    <header class="site-header">
+        <div class="site-header__inner">
+            <a class="brand" href="/">Gallery</a>
+            <nav class="nav">
+                <a href="/"><i data-lucide="images"></i><span>My images</span></a>
+                <a class="is-active" href="/favorites"><i data-lucide="heart"></i><span>Favorites</span></a>
+                <a href="/logout"><i data-lucide="log-out"></i><span>Log out</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="page">
+        <div class="page-title">
+            <div>
+                <h1 class="display">Favorite images</h1>
+                <p class="lead">Images you marked with a heart. Stored in this browser.</p>
+            </div>
+            <a class="btn btn-outline" href="/">
+                <i data-lucide="images"></i>
+                All images
+            </a>
+        </div>
+
+        <div id="favorites-empty" class="card empty-state">
+            <h2 class="display-sm">No favorites yet</h2>
+            <p>Open your gallery and tap the heart on an image.</p>
+            <a class="btn btn-primary" href="/">
+                <i data-lucide="images"></i>
+                Browse images
+            </a>
+        </div>
+
+        <div class="image-grid" id="favorites-grid" hidden></div>
+    </main>
+
+    <script>
+      window.IMAGE_CATALOG = <%- safeJson(catalog) %>;
+    </script>
+    <script src="/favorites.js"></script>
+    <script src="/viewer.js"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: userdb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    volumes:
+      # SQL data lives on the host so it survives container restarts/removals
+      - ./mysql-data:/var/lib/mysql
+      # Creates the database and tables on first boot (runs schema.sql once)
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    ports:
+      - "3306:3306"
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_NAME: userdb
+      DB_USER: appuser
+      DB_PASS: apppass
+      SESSION_SECRET: change-me-to-a-long-random-string
+    volumes:
+      # Uploaded images live on the host so they survive container restarts/removals
+      - ./upload-data:/app/uploads
+    ports:
+      - "3000:3000"
