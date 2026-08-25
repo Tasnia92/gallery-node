@@ -53,12 +53,22 @@ A faithful port of the original PHP gallery app — same features and UI — run
 
 Requires Docker Desktop (or Docker Engine + Compose).
 
-```sh
-docker compose up --build
-```
+1. Create your local config — never commit it (it is gitignored):
+
+   ```sh
+   copy .env.example .env
+   ```
+
+   Fill in real values for the passwords and `SESSION_SECRET`.
+
+2. Start the stack:
+
+   ```sh
+   docker compose up --build
+   ```
 
 - App: http://localhost:3000
-- MySQL: `localhost:3306` (`userdb` / `appuser` / `apppass`, root password `rootpass`)
+- MySQL: `localhost:3306`
 - `schema.sql` is applied automatically on first boot.
 
 ### Where your data lives
@@ -80,8 +90,32 @@ restarts and removals:
 Or back up the SQL while running:
 
 ```sh
-docker compose exec db sh -c "mysqldump -u root -prootpass userdb" > backup.sql
+docker compose exec db sh -c "mysqldump -u root -p$MYSQL_ROOT_PASSWORD userdb" > backup.sql
 ```
+
+## CI/CD pipeline (GitHub Actions)
+
+`.github/workflows/main.yml` runs on every push to `main`, as four separate jobs:
+
+1. **lint** — install dependencies + TypeScript typecheck
+2. **build** — compile the app and build the Docker image
+3. **deploy** — boot the full stack (MySQL + app), health-check it, tear down
+4. **publish** — log in to Docker Hub and push `latest` + commit-SHA tags
+
+### Required GitHub secrets
+
+Set these in **Settings → Secrets and variables → Actions**
+(never put them in code or `.env.example`):
+
+| Secret                 | Purpose                                   |
+| ---------------------- | ----------------------------------------- |
+| `DOCKERHUB_USERNAME`   | Docker Hub account (e.g. `tasniapia`)     |
+| `DOCKERHUB_TOKEN`      | Docker Hub access token (PAT)             |
+| `MYSQL_ROOT_PASSWORD`  | MySQL root password                       |
+| `MYSQL_DATABASE`       | Database name (e.g. `userdb`)             |
+| `MYSQL_USER`           | App DB user (e.g. `appuser`)              |
+| `MYSQL_PASSWORD`       | App DB user password                      |
+| `SESSION_SECRET`       | Long random string for session signing    |
 
 ## Project layout
 
